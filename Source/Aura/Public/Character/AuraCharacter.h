@@ -18,7 +18,11 @@ public:
 	AAuraCharacter();
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
+	virtual int32 GetPlayerLevel() override;
 
 private:
-	void InitAbilityActorInfo();
+	virtual void InitAbilityActorInfo() override;
+
+protected:
+	virtual FVector GetCombatSocketLocation_L() override;
 };
