@@ -3,6 +3,7 @@
 #include "Character/AuraCharacterBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
@@ -41,6 +42,16 @@ UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
 	return HitReactMontage;
 }
 
+void AAuraCharacterBase::SetCombatTarget_Implementation(AActor* InCombatTarget)
+{
+	CombatTarget = InCombatTarget;
+}
+
+AActor* AAuraCharacterBase::GetCombatTarget_Implementation() const
+{
+	return CombatTarget;
+}
+
 void AAuraCharacterBase::Die()
 {
 	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
@@ -60,6 +71,8 @@ void AAuraCharacterBase::MultiCastHandleDeath_Implementation()
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Dissolve();
+
+	bDead = true;
 }
 
 void AAuraCharacterBase::BeginPlay()
@@ -67,9 +80,41 @@ void AAuraCharacterBase::BeginPlay()
 	Super::BeginPlay();
 }
 
-FVector AAuraCharacterBase::GetCombatSocketLocation_L()
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
-	return Weapon->GetSocketLocation(WeaponTipSocketName_L);
+	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
+	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Weapon_Left) && IsValid(Weapon))
+	{
+		return Weapon->GetSocketLocation(WeaponTipSocketName_L);
+	}
+	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Weapon_Right) && IsValid(Weapon))
+	{
+		return Weapon->GetSocketLocation(WeaponTipSocketName_R);
+	}
+	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Hand_Left))
+	{
+		return GetMesh()->GetSocketLocation(HandSocketName_L);
+	}
+	if (MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Hand_Right))
+	{
+		return GetMesh()->GetSocketLocation(HandSocketName_R);
+	}
+	return FVector();
+}
+
+bool AAuraCharacterBase::IsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* AAuraCharacterBase::GetAvatar_Implementation()
+{
+	return this;
+}
+
+TArray<FTaggedMontage> AAuraCharacterBase::GetAttackMontages_Implementation()
+{
+	return AttackMontages;
 }
 
 void AAuraCharacterBase::InitAbilityActorInfo()

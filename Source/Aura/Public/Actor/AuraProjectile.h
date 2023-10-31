@@ -28,6 +28,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn=true))
 	FGameplayEffectSpecHandle DamageEffectSpecHandle;
 
+	UPROPERTY(EditAnywhere , meta=())
+	float ProjectileDamageRadius;
+
+	FORCEINLINE TArray<FName> GetIgnoredTags() const { return IgnoredTags; }
+
+	void SetIgnoredTags(const TArray<FName>& InIgnoredTags) { this->IgnoredTags = InIgnoredTags; }
+
 protected:
 	virtual void BeginPlay() override;
 	UFUNCTION()
@@ -54,4 +61,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingSoundComponent;
+
+	UPROPERTY()
+	TArray<FName> IgnoredTags;
 };

@@ -31,8 +31,9 @@ public:
 	AAuraPlayerController();
 	virtual void PlayerTick(float DeltaTime) override;
 
-	UFUNCTION(Client,Reliable)
-	void ShowDamageNumber(float Damage,ACharacter* TargetCharacter,float Percentage,bool bBlockedHit , bool bCriticalHit);
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float Damage, ACharacter* TargetCharacter, float Percentage, bool bBlockedHit,
+	                      bool bCriticalHit);
 
 protected:
 	virtual void BeginPlay() override;
@@ -45,21 +46,25 @@ private:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
 
-	UPROPERTY(EditAnywhere,Category="Cursor")
+	UPROPERTY(EditAnywhere, Category="Cursor")
 	UUserWidget* Default_Cursor;
-	UPROPERTY(EditAnywhere,Category="Cursor")
+	UPROPERTY(EditAnywhere, Category="Cursor")
 	UUserWidget* Target_Cursor;
-	
+
 
 	void Move(const FInputActionValue& InputActionValue);
 
 	void CursorTrace();
 	FHitResult CursorHit;
-	
+
 	IEnemyInterface* LastActor;
 	IEnemyInterface* ThisActor;
 
 	void AbilityInputTagPressed(FGameplayTag InputTag);
+
+	UFUNCTION(BlueprintCallable, Category="Movement")
+	void CreateSplineAndMove(const FVector& TargetLocation,float Radius);
+
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);
 
@@ -87,6 +92,6 @@ private:
 
 	void AutoRun();
 
-	UPROPERTY(EditDefaultsOnly,Category="Widget|Damage")
+	UPROPERTY(EditDefaultsOnly, Category="Widget|Damage")
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 };

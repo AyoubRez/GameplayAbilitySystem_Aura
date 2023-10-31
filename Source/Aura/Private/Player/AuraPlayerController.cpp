@@ -13,6 +13,7 @@
 #include "Components/SplineComponent.h"
 #include "GameFramework/Character.h"
 #include "Input/AuraInputComponent.h"
+#include "Interaction/CombatInterface.h"
 #include "Interaction/EnemyInterface.h"
 #include "UI/Widget/DamageTextComponent.h"
 
@@ -140,6 +141,33 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 	{
 		bTargeting = ThisActor ? true : false;
 		bAutoRunning = false;
+		if (!bTargeting)
+		{
+			if (APawn* ControlledPawn = GetPawn())
+			{
+				ICombatInterface::Execute_SetCombatTarget(ControlledPawn, nullptr);
+			}
+		}
+	}
+}
+
+void AAuraPlayerController::CreateSplineAndMove(const FVector& TargetLocation, float Radius)
+{
+	if (const APawn* ControlledPawn = GetPawn())
+	{
+		const FVector Direction = ControlledPawn->GetActorLocation() - TargetLocation;;
+		if (UNavigationPath* NavigationPath = UNavigationSystemV1::FindPathToLocationSynchronously(
+			this, ControlledPawn->GetActorLocation(),
+			TargetLocation + Direction.GetSafeNormal() * Radius))
+		{
+			Spline->ClearSplinePoints();
+			for (const auto& PointsLoc : NavigationPath->PathPoints)
+			{
+				Spline->AddSplinePoint(PointsLoc, ESplineCoordinateSpace::World);
+			}
+			CashedDestination = NavigationPath->PathPoints[NavigationPath->PathPoints.Num() - 1];
+			bAutoRunning = true;
+		}
 	}
 }
 
@@ -156,24 +184,16 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	}
 	else
 	{
-		const APawn* ControlledPawn = GetPawn();
-		if (FollowTime <= ShortPressThreshold && ControlledPawn)
+		if (FollowTime <= ShortPressThreshold)
 		{
-			if (UNavigationPath* NavigationPath = UNavigationSystemV1::FindPathToLocationSynchronously(
-				this, ControlledPawn->GetActorLocation(),
-				CashedDestination))
-			{
-				Spline->ClearSplinePoints();
-				for (const auto& PointsLoc : NavigationPath->PathPoints)
-				{
-					Spline->AddSplinePoint(PointsLoc, ESplineCoordinateSpace::World);
-				}
-				CashedDestination = NavigationPath->PathPoints[NavigationPath->PathPoints.Num() - 1];
-				bAutoRunning = true;
-			}
+			CreateSplineAndMove(CashedDestination, 0.f);
 		}
 		FollowTime = 0.f;
 		bTargeting = false;
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			ICombatInterface::Execute_SetCombatTarget(ControlledPawn, nullptr);
+		}
 	}
 }
 
@@ -198,6 +218,7 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		{
 			const FVector WorldDirection = (CashedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
 			ControlledPawn->AddMovementInput(WorldDirection);
+			ICombatInterface::Execute_SetCombatTarget(ControlledPawn, nullptr);
 		}
 	}
 }

@@ -25,12 +25,25 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
-	virtual int32 GetPlayerLevel() override;
-	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
-	virtual void Die() override;
-
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MultiCastHandleDeath();
+
+	UPROPERTY(BlueprintReadWrite, Category="Combat")
+	TObjectPtr<AActor> CombatTarget;
+	/* Combat interface */
+	virtual int32 GetPlayerLevel() override;
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;
+	virtual AActor* GetCombatTarget_Implementation() const override;
+	virtual void Die() override;
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
+	virtual bool IsDead_Implementation() const override;
+	virtual AActor* GetAvatar_Implementation() override;
+	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
+	/* End Combat interface */
+
+	UPROPERTY(EditAnywhere, Category="Combat")
+	TArray<FTaggedMontage> AttackMontages;
 
 protected:
 	virtual void BeginPlay() override;
@@ -41,7 +54,16 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Combat")
 	FName WeaponTipSocketName_L;
 
-	virtual FVector GetCombatSocketLocation_L() override;
+	UPROPERTY(EditAnywhere, Category="Combat")
+	FName WeaponTipSocketName_R;
+	
+	UPROPERTY(EditAnywhere, Category="Combat")
+	FName HandSocketName_L;
+
+	UPROPERTY(EditAnywhere, Category="Combat")
+	FName HandSocketName_R;
+
+	bool bDead = false;
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -71,10 +93,10 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartDissolveTimeLine(UMaterialInstanceDynamic* DynamicMaterialInstance);
-	
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void WeaponStartDissolveTimeLine(UMaterialInstanceDynamic* DynamicMaterialInstance);
-    	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<TObjectPtr<UMaterialInstance>> DissolveMaterialInstances;
 

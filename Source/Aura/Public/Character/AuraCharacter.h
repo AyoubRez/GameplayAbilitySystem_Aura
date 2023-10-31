@@ -6,6 +6,7 @@
 #include "Character/AuraCharacterBase.h"
 #include "AuraCharacter.generated.h"
 
+class AAuraPlayerController;
 /**
  * 
  */
@@ -20,9 +21,9 @@ public:
 	virtual void OnRep_PlayerState() override;
 	virtual int32 GetPlayerLevel() override;
 
+	UPROPERTY(BlueprintReadOnly)
+	AAuraPlayerController* PlayerController;
+
 private:
 	virtual void InitAbilityActorInfo() override;
-
-protected:
-	virtual FVector GetCombatSocketLocation_L() override;
 };

@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "Components/BoxComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura/Aura.h"
 #include "Components/AudioComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -58,22 +59,43 @@ void AAuraProjectile::OnBoxOverlap(UPrimitiveComponent* OverlappedComp, AActor* 
                                    const FHitResult& SweepResult)
 {
 	if (DamageEffectSpecHandle.Data.IsValid() && DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() ==
-		OtherActor)return;
+		OtherActor)
+		return;
 
-	if(!bHit)
+	if (!bHit)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 		if (LoopingSoundComponent)LoopingSoundComponent->Stop();
 	}
-	
+
 
 	if (HasAuthority())
 	{
-		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
-		if (TargetASC)
+		TArray<AActor*> OverlappingActors;
+		TArray<AActor*> ActorsToIgnore;
+		ActorsToIgnore.Add(this);
+		UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(this, OverlappingActors, ActorsToIgnore, ProjectileDamageRadius,
+		                                                      GetActorLocation());
+		for (auto Overlap : OverlappingActors)
 		{
-			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+			bool IgnoreOverlapped = false;
+			for (auto Tag : IgnoredTags)
+			{
+				if (Overlap->ActorHasTag(Tag))
+				{
+					IgnoreOverlapped = true;
+					break;
+				}
+			}
+			if (!IgnoreOverlapped)
+			{
+				UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Overlap);
+				if (TargetASC)
+				{
+					TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+				}
+			}
 		}
 		Destroy();
 	}

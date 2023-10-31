@@ -32,7 +32,7 @@ public:
 	FGameplayTag Attributes_Secondary_Base_MaxMana;
 	FGameplayTag Attributes_Secondary_Base_MaxStamina;
 	FGameplayTag Attributes_Secondary_Base_MaxShield;
-	
+
 	FGameplayTag Attributes_Secondary_Attack_ArmorPenetration;
 	FGameplayTag Attributes_Secondary_Attack_MagicPenetration;
 	FGameplayTag Attributes_Secondary_Attack_TruePenetration;
@@ -86,13 +86,20 @@ public:
 	FGameplayTag Damage_Lightning_Max;
 
 
-	TMap<FGameplayTag,FGameplayTag> DamageTypesToResistances;
-	TMap<FGameplayTag,FGameplayTag> MaxDamageTypesToResistances;
-	TMap<FGameplayTag,FGameplayTag> ResistancesToPenetrations;
-	
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+	TMap<FGameplayTag, FGameplayTag> MaxDamageTypesToResistances;
+	TMap<FGameplayTag, FGameplayTag> ResistancesToPenetrations;
+
+	FGameplayTag Abilities_Attack;
 
 
 	FGameplayTag Effects_HitReact;
+
+
+	FGameplayTag Montage_Attack_Weapon_Left;
+	FGameplayTag Montage_Attack_Weapon_Right;
+	FGameplayTag Montage_Attack_Hand_Left;
+	FGameplayTag Montage_Attack_Hand_Right;
 
 private:
 	static FAuraGameplayTags GameplayTags;

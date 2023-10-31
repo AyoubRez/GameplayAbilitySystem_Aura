@@ -29,6 +29,7 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	InitAbilityActorInfo();
 	//InitializePrimaryAttributes(); // only needed on server
 	AddCharacterAbilities();
+	PlayerController = Cast<AAuraPlayerController>(NewController);
 }
 
 void AAuraCharacter::OnRep_PlayerState()
@@ -62,9 +63,4 @@ void AAuraCharacter::InitAbilityActorInfo()
 		}
 	}
 	InitializeDefaultAttributes();
-}
-
-FVector AAuraCharacter::GetCombatSocketLocation_L()
-{
-	return GetMesh()->GetSocketLocation(WeaponTipSocketName_L);
 }

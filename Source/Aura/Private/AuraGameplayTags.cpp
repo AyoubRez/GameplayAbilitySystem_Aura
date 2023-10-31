@@ -104,9 +104,9 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 			"Reduces Player MagicResist Ignore"));
 
 	GameplayTags.Attributes_Secondary_Attack_TruePenetration = UGameplayTagsManager::Get().AddNativeGameplayTag(
-	FName("Attributes.Secondary.Attack.TruePenetration"),
-	FString(
-		"Reduces Player TrueResist Ignore"));
+		FName("Attributes.Secondary.Attack.TruePenetration"),
+		FString(
+			"Reduces Player TrueResist Ignore"));
 
 	GameplayTags.Attributes_Secondary_Attack_CriticalHitChance = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Secondary.Attack.CriticalHitChance"),
@@ -305,7 +305,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.ResistancesToPenetrations.Add(GameplayTags.Attributes_Secondary_Defence_MagicResist,
 	                                           GameplayTags.Attributes_Secondary_Attack_MagicPenetration);
 	GameplayTags.ResistancesToPenetrations.Add(GameplayTags.Attributes_Secondary_Defence_TrueResist,
-											   GameplayTags.Attributes_Secondary_Attack_TruePenetration);
+	                                           GameplayTags.Attributes_Secondary_Attack_TruePenetration);
 	GameplayTags.ResistancesToPenetrations.Add(GameplayTags.Attributes_Secondary_Defence_BloodResist,
 	                                           GameplayTags.Attributes_Secondary_Attack_ArmorPenetration);
 	GameplayTags.ResistancesToPenetrations.Add(GameplayTags.Attributes_Secondary_Defence_LightningResist,
@@ -314,6 +314,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	                                           GameplayTags.Attributes_Secondary_Attack_MagicPenetration);
 
 
+	/*Abilities*/
+	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Attack"),
+		FString(
+			"Attack Abilities"));
 	/**Effects */
 
 
@@ -321,4 +326,23 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Effects.HitReact"),
 		FString(
 			"Hit Reaction effect"));
+
+
+	/* Montage */
+	GameplayTags.Montage_Attack_Weapon_Left = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Montage.Attack.Weapon.Left"),
+		FString(
+			"Attack Left Weapon"));
+	GameplayTags.Montage_Attack_Weapon_Right = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Montage.Attack.Weapon.Right"),
+		FString(
+			"Attack Right Weapon"));
+	GameplayTags.Montage_Attack_Hand_Left = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Montage.Attack.Hand.Left"),
+		FString(
+			"Attack Left Hand"));
+	GameplayTags.Montage_Attack_Hand_Right = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Montage.Attack.Hand.Right"),
+		FString(
+			"Attack Right Hand"));
 }

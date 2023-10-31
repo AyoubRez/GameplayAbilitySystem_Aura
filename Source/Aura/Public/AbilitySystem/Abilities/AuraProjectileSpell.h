@@ -23,6 +23,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
 
-	UFUNCTION(BlueprintCallable,Category=Projectile)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<FName> IgnoredTags;
+
+	UFUNCTION(BlueprintCallable, Category=Projectile)
 	void SpawnProjectile(const FVector& ProjectileTargetLocation);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag MontageTag;
 };

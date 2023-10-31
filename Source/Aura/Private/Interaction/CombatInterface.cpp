@@ -9,7 +9,4 @@ int32 ICombatInterface::GetPlayerLevel()
 }
 
 // Add default functionality here for any ICombatInterface functions that are not pure virtual.
-FVector ICombatInterface::GetCombatSocketLocation_L()
-{
-	return FVector();
-}
+

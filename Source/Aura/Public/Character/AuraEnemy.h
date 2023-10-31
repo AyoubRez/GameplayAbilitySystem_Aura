@@ -9,6 +9,8 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AuraEnemy.generated.h"
 
+class AAuraAIController;
+class UBehaviorTree;
 class UWidgetComponent;
 /**
  * 
@@ -23,6 +25,7 @@ public:
 	virtual void HighLightActor() override;
 	virtual void UnHighLightActor() override;
 	virtual int32 GetPlayerLevel() override;
+	virtual void PossessedBy(AController* NewController) override;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
 	FOnAttributeChangedSignature OnHealthChanged;
@@ -41,8 +44,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Combat")
 	float LifeSpan = 5.f;
 
-	
-
 
 	virtual void Die() override;
 
@@ -60,4 +61,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
+
+	UPROPERTY(EditAnywhere, Category="AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	UPROPERTY()
+	TObjectPtr<AAuraAIController> AuraAIController;
 };
